@@ -1,5 +1,8 @@
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class EchoServer extends AbstractServer {
@@ -144,12 +147,25 @@ public class EchoServer extends AbstractServer {
             {
             }
         }    
-            // yell message to all users in all rooms
-            if(id.equals("yell"))
-            {
+        // yell message to all users in all rooms
+        if(id.equals("yell"))
+        {
             String message = env.getContents().toString();
             sendToAllClients("YELL: >> " + message);
+        }
+
+        if(id.equals("ftpUpload")){
+            byte[] bytesFromClient = (byte[])env.getContents();
+            String fileName = env.getArgs();
+
+            Path path = Paths.get("", "uploads", fileName);
+
+            try {
+                Files.write(path, bytesFromClient);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        }
         
     }
     

@@ -1,5 +1,8 @@
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -286,6 +289,28 @@ public class ChatClient extends AbstractClient {
                 } catch (IOException e) {
                     clientUI.display("failed to yell.");
                 }
+            }
+        }
+
+        if (message.indexOf("#ftpUpload") >= 0) {
+            String selectedFilePath = message.substring(10).trim();
+            System.out.println("should send this file to server - " + selectedFilePath);
+
+            Envelope env = null ;
+            try {
+                Path path = Paths.get(selectedFilePath);
+                byte[] bytes = Files.readAllBytes(path);
+
+                env = new Envelope("ftpUpload", path.getFileName().toString(), bytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try{
+                sendToServer(env);
+            }
+            catch (IOException e){
+                clientUI.display("could not send file to server");
             }
         }
 
