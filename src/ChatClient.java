@@ -74,6 +74,14 @@ public class ChatClient extends AbstractClient {
                 clientUI.display(userId);
             }
         }
+
+        if(id.equals("ftplist"))
+        {
+            // extract the list of file
+            ArrayList<String> fileNames = (ArrayList<String>) env.getContents();
+
+            clientUI.sendFileList(fileNames);
+        }
     }
         
         
@@ -311,6 +319,18 @@ public class ChatClient extends AbstractClient {
             }
             catch (IOException e){
                 clientUI.display("could not send file to server");
+            }
+        }
+
+        if (message.indexOf("#ftplist") >= 0) {
+            System.out.println("get file list from server");
+            Envelope env = new Envelope("ftplist", "", null);
+
+            try{
+                sendToServer(env);
+            }
+            catch (IOException e){
+                clientUI.display("could not get file list from server");
             }
         }
 

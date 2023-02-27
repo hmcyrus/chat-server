@@ -4,6 +4,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class EchoServer extends AbstractServer {
     //Class variables *************************************************
@@ -164,6 +167,35 @@ public class EchoServer extends AbstractServer {
                 Files.write(path, bytesFromClient);
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+
+        if(id.equals("ftplist")){
+            Path path = Paths.get("", "uploads");
+
+            List<String> fileNames = null;
+            try (Stream<Path> stream = Files.list(path)) {
+                fileNames = stream.filter(file -> !Files.isDirectory(file))
+                        .map(Path::getFileName)
+                        .map(Path::toString)
+                        .collect(Collectors.toList());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("printing list");
+            for(String s: fileNames){
+                System.out.println(">> " + s);
+            }
+
+            Envelope returnEnv = new Envelope("ftplist", "n", fileNames);
+
+            try
+            {
+                client.sendToClient(returnEnv);
+            }
+            catch(IOException ioe)
+            {
+                System.out.println("exception in sending file list to client");
             }
         }
         

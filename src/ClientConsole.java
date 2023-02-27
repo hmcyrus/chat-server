@@ -1,5 +1,6 @@
 
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * This class constructs the UI for a chat client. It implements the chat
@@ -84,6 +85,11 @@ public class ClientConsole implements ChatIF {
      */
     public void display(String message) {
         System.out.println("> " + message);
+    }
+
+    @Override
+    public void sendFileList(ArrayList<String> fileNames) {
+
     }
 
     //Class methods ***************************************************

@@ -7,6 +7,8 @@ import javax.swing.filechooser.FileSystemView;
 import java.awt.event.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  *
@@ -33,6 +35,12 @@ public class GUIConsole extends JFrame implements ChatIF {
 
     JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
     private String selectedFilePath;
+
+    Vector<String> comboBoxItems=new Vector();
+    final DefaultComboBoxModel model = new DefaultComboBoxModel(comboBoxItems);
+    JComboBox comboBox = new JComboBox(model);
+
+    private String selecteFileName;
     
     //main chat area
     private JTextArea messageList = new JTextArea();
@@ -43,7 +51,7 @@ public class GUIConsole extends JFrame implements ChatIF {
     {
       
         super("Simple Chat GUI");
-        setSize(300, 450);
+        setSize(300, 550);
         
         setLayout(new BorderLayout(5, 6));
         JPanel bottom = new JPanel();
@@ -51,14 +59,18 @@ public class GUIConsole extends JFrame implements ChatIF {
         add("South", bottom);
         
         //layout of the bottom jframe
-        bottom.setLayout(new GridLayout(6, 2, 5, 5));
+        bottom.setLayout(new GridLayout(8, 2, 5, 5));
         bottom.add(hostLB); bottom.add(hostTxF);
         bottom.add(portLB); bottom.add(portTxF);
         bottom.add(messageLB); bottom.add(messageTxF);
         bottom.add(openB); bottom.add(sendB);
         bottom.add(closeB); bottom.add(quitB);
         bottom.add(browseB); bottom.add(saveB);
-        
+
+        bottom.add(comboBox);
+        comboBoxItems.add("one");
+        comboBoxItems.add("two");
+
         // Action listener for sending
         sendB.addActionListener(new ActionListener() 
         {
@@ -84,6 +96,27 @@ public class GUIConsole extends JFrame implements ChatIF {
                 save();
             }
         });
+
+        comboBox.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                getSelectedFile(e);
+            }
+        });
+
+        comboBox.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println(comboBox.getSelectedItem());
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                System.out.println("mouse Enter event fired");
+                getFileList();
+            }
+        });
         
         try {
             client = new ChatClient(host, port, this);
@@ -106,7 +139,15 @@ public class GUIConsole extends JFrame implements ChatIF {
      public void display(String message) {
         messageList.insert(message + "\n", 0);
     }
-    
+
+    @Override
+    public void sendFileList(ArrayList<String> fileNames) {
+        comboBoxItems.clear();
+        for(String s: fileNames){
+            comboBoxItems.add(s);
+        }
+    }
+
     public static void main(String[] args)
     {
         GUIConsole chat = new GUIConsole("localhost", 5555);
@@ -143,5 +184,15 @@ public class GUIConsole extends JFrame implements ChatIF {
     public void save(){
         System.out.println("should send the file to server");
         uploadFileToServer("#ftpUpload" + selectedFilePath);
+    }
+
+    public void getFileList(){
+        client.handleMessageFromClientUI("#ftplist");
+    }
+
+    public void getSelectedFile(ActionEvent event){
+        JComboBox cb = (JComboBox)event.getSource();
+        selecteFileName = (String)cb.getSelectedItem();
+        System.out.println("selected fle - " + selecteFileName);
     }
 }
