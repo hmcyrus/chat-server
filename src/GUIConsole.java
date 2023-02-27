@@ -38,7 +38,7 @@ public class GUIConsole extends JFrame implements ChatIF {
     private String selectedFilePath;
 
     Vector<String> comboBoxItems=new Vector();
-    final DefaultComboBoxModel model = new DefaultComboBoxModel(comboBoxItems);
+    DefaultComboBoxModel model = new DefaultComboBoxModel(comboBoxItems);
     JComboBox comboBox = new JComboBox(model);
 
     private String selecteFileName;
@@ -150,10 +150,8 @@ public class GUIConsole extends JFrame implements ChatIF {
 
     @Override
     public void sendFileList(ArrayList<String> fileNames) {
-        comboBoxItems.clear();
-        for(String s: fileNames){
-            comboBoxItems.add(s);
-        }
+        Vector<String> comboBoxItems=new Vector(fileNames);
+        comboBox.setModel(new DefaultComboBoxModel(comboBoxItems));
     }
 
     public static void main(String[] args)
