@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -196,6 +197,19 @@ public class EchoServer extends AbstractServer {
             catch(IOException ioe)
             {
                 System.out.println("exception in sending file list to client");
+            }
+        }
+
+        if(id.equals("ftpget")){
+            String fileName = env.getArgs();
+
+            Path sourcePath = Paths.get("", "uploads", fileName);
+            Path destinationPath = Paths.get("", "downloads", fileName);
+
+            try {
+                Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage(), e);
             }
         }
         

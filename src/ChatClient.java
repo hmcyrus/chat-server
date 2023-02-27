@@ -334,6 +334,19 @@ public class ChatClient extends AbstractClient {
             }
         }
 
+        if (message.indexOf("#ftpget") >= 0) {
+            String selectedFileName = message.substring(8).trim();
+
+            Envelope env = new Envelope("ftpget", selectedFileName, null);
+
+            try{
+                sendToServer(env);
+            }
+            catch (IOException e){
+                clientUI.display("could not download file from to server");
+            }
+        }
+
     }
 
 }

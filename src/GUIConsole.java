@@ -24,6 +24,7 @@ public class GUIConsole extends JFrame implements ChatIF {
     private JButton quitB = new JButton("Quit");
     private JButton browseB = new JButton("Browse");
     private JButton saveB = new JButton("Save");
+    private JButton downloadB = new JButton("Download");
     //textfields
     private JTextField portTxF = new JTextField("5555");
     private JTextField hostTxF = new JTextField("127.0.0.1");
@@ -66,10 +67,7 @@ public class GUIConsole extends JFrame implements ChatIF {
         bottom.add(openB); bottom.add(sendB);
         bottom.add(closeB); bottom.add(quitB);
         bottom.add(browseB); bottom.add(saveB);
-
-        bottom.add(comboBox);
-        comboBoxItems.add("one");
-        comboBoxItems.add("two");
+        bottom.add(comboBox); bottom.add(downloadB);
 
         // Action listener for sending
         sendB.addActionListener(new ActionListener() 
@@ -97,6 +95,7 @@ public class GUIConsole extends JFrame implements ChatIF {
             }
         });
 
+        // saves the selected file name
         comboBox.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -105,6 +104,7 @@ public class GUIConsole extends JFrame implements ChatIF {
             }
         });
 
+        // mouseClicked method gets the selected item, mouseEntered method fetches the current file list
         comboBox.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -115,6 +115,14 @@ public class GUIConsole extends JFrame implements ChatIF {
             public void mouseEntered(MouseEvent e) {
                 System.out.println("mouse Enter event fired");
                 getFileList();
+            }
+        });
+
+        downloadB.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                downloadSelectedFile();
             }
         });
         
@@ -193,6 +201,11 @@ public class GUIConsole extends JFrame implements ChatIF {
     public void getSelectedFile(ActionEvent event){
         JComboBox cb = (JComboBox)event.getSource();
         selecteFileName = (String)cb.getSelectedItem();
-        System.out.println("selected fle - " + selecteFileName);
+        System.out.println("selected file - " + selecteFileName);
+    }
+
+    public void downloadSelectedFile(){
+        System.out.println("downloading file - " + selecteFileName);
+        client.handleMessageFromClientUI("#ftpget " + selecteFileName);
     }
 }
