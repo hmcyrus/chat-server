@@ -75,12 +75,36 @@ public class ChatClient extends AbstractClient {
             }
         }
 
+        //#april
+        /*
+        *  client-side implementation of receival of ftplist command
+        *  extracts the list of file received in the Envelope from server
+        *  and sends it to clientUI using the client-side implementation
+        *  of sendFileList method of interface ChatIF
+         */
         if(id.equals("ftplist"))
         {
-            // extract the list of file
             ArrayList<String> fileNames = (ArrayList<String>) env.getContents();
-
             clientUI.sendFileList(fileNames);
+        }
+
+        //#april
+        /*
+        *   client-side implementation of receival of ftpget command
+        *   extracts the byte[] and file name received in the Envelope from server
+        *   and saves it to the downloads folder using the same file name received
+        */
+        if(id.equals("ftpget")){
+            byte[] bytesFromServer = (byte[])env.getContents();
+            String fileName = env.getArgs();
+
+            Path path = Paths.get("", "downloads", fileName);
+
+            try {
+                Files.write(path, bytesFromServer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
         
@@ -300,6 +324,11 @@ public class ChatClient extends AbstractClient {
             }
         }
 
+        //#april
+        /*
+        *    sending implementation of ftpUpload command
+        *    converts the file to byte[] and sends to server wrapped in Envelope
+        */
         if (message.indexOf("#ftpUpload") >= 0) {
             String selectedFilePath = message.substring(10).trim();
             System.out.println("should send this file to server - " + selectedFilePath);
@@ -322,6 +351,11 @@ public class ChatClient extends AbstractClient {
             }
         }
 
+        //#april
+        /*
+         *    sending implementation of ftplist command
+         *    requesting server the list of files uploaded so far and available for download
+         */
         if (message.indexOf("#ftplist") >= 0) {
             System.out.println("get file list from server");
             Envelope env = new Envelope("ftplist", "", null);
@@ -333,7 +367,11 @@ public class ChatClient extends AbstractClient {
                 clientUI.display("could not get file list from server");
             }
         }
-
+        //#april
+        /*
+         *    sending implementation of ftpget command
+         *    requesting from server a file with specific name from the files available to download
+         */
         if (message.indexOf("#ftpget") >= 0) {
             String selectedFileName = message.substring(8).trim();
 

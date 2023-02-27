@@ -52,7 +52,7 @@ public class GUIConsole extends JFrame implements ChatIF {
     {
       
         super("Simple Chat GUI");
-        setSize(300, 550);
+        setSize(500, 550);
         
         setLayout(new BorderLayout(5, 6));
         JPanel bottom = new JPanel();
@@ -172,6 +172,12 @@ public class GUIConsole extends JFrame implements ChatIF {
         client.handleMessageFromClientUI(message);
     }
 
+    //#april
+    /*
+     *   actionlistener of Browse button calls this method
+     *   displays the JFileChooser component and
+     *   saves the absolute path of the selected file in a variable
+     */
     public void browse(){
         System.out.println("Browse clicked");
 
@@ -187,21 +193,41 @@ public class GUIConsole extends JFrame implements ChatIF {
         }
     }
 
+    //#april
+    /*
+     *   actionlistener of Save button calls this method
+     *   uploads the file pointed by the path stored in the selectedFilePath variable
+     */
     public void save(){
         System.out.println("should send the file to server");
         uploadFileToServer("#ftpUpload" + selectedFilePath);
     }
 
+    //#april
+    /*
+     *   method used by the implementation of the mouseEntered method
+     *   of MouseListener registered to the combobox
+     */
     public void getFileList(){
         client.handleMessageFromClientUI("#ftplist");
     }
 
+    //#april
+    /*
+     *   actionlistener of combobox calls this method
+     *   stores the selected item to variable selecteFileName
+     */
     public void getSelectedFile(ActionEvent event){
         JComboBox cb = (JComboBox)event.getSource();
         selecteFileName = (String)cb.getSelectedItem();
         System.out.println("selected file - " + selecteFileName);
     }
 
+    //#april
+    /*
+     *   actionlistener of Download button calls this method
+     *   sends request to server to download
+     */
     public void downloadSelectedFile(){
         System.out.println("downloading file - " + selecteFileName);
         client.handleMessageFromClientUI("#ftpget " + selecteFileName);

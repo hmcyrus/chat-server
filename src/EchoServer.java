@@ -158,6 +158,12 @@ public class EchoServer extends AbstractServer {
             sendToAllClients("YELL: >> " + message);
         }
 
+        //#april
+        /*
+         * server-side implementation of ftpUpload command
+         * collects the name and byte[] of file from the Envelope received from client
+         * and saves it to uploads folder using the extracted file name
+         */
         if(id.equals("ftpUpload")){
             byte[] bytesFromClient = (byte[])env.getContents();
             String fileName = env.getArgs();
@@ -171,6 +177,12 @@ public class EchoServer extends AbstractServer {
             }
         }
 
+        //#april
+        /*
+        * server-side implementation of ftplist command
+        * collects the list of file in uploads folder into a list
+        * and sends it to the client wrapped in an Envelope
+        */
         if(id.equals("ftplist")){
             Path path = Paths.get("", "uploads");
 
@@ -200,16 +212,22 @@ public class EchoServer extends AbstractServer {
             }
         }
 
+        //#april
+        /*
+        * server-side implementation of ftpget
+        * first it extracts the filename from the Envelope
+        * then converts the file into byte[] and sends it to client wrapped in an Envelope
+        */
         if(id.equals("ftpget")){
             String fileName = env.getArgs();
 
             Path sourcePath = Paths.get("", "uploads", fileName);
-            Path destinationPath = Paths.get("", "downloads", fileName);
 
             try {
-                Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-            } catch (Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
+                byte[] fileContents = Files.readAllBytes(sourcePath);
+                client.sendToClient(new Envelope("ftpget" , fileName, fileContents));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         
